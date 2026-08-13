@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shcoome Hub</title>
+<style>
+  :root{
+    --bg:#0a0d16;
+    --bg-glow-a: rgba(79,142,247,0.10);
+    --bg-glow-b: rgba(139,92,246,0.14);
+    --card:#121729;
+    --card-border:#1f2740;
+    --card-border-hover:#334066;
+    --text:#e9ecf5;
+    --text-dim:#93a0bd;
+    --text-faint:#5c6987;
+    --blue:#4f8ef7;
+    --purple:#8b5cf6;
+    --green:#22c55e;
+    --amber:#f59e0b;
+    --red:#f87171;
+    --grad: linear-gradient(90deg, var(--blue), var(--purple));
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(600px 400px at 15% 95%, var(--bg-glow-b), transparent 60%),
+      radial-gradient(500px 350px at 85% 5%, var(--bg-glow-a), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    min-height:100vh;
+  }
+
+  button, input, select, textarea{ font-family:inherit; }
+  a{ color:inherit; }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    border-bottom:1px solid var(--card-border);
+    background: rgba(10,13,22,0.7);
+    backdrop-filter: blur(6px);
+    position:sticky; top:0; z-index:50;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand .logo{
+    font-weight:800; font-size:1.3rem; letter-spacing:0.5px;
+    background: var(--grad);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .badge{
+    display:flex; align-items:center; gap:6px;
+    font-size:0.72rem; font-weight:700; letter-spacing:0.4px;
+    color:var(--green); background: rgba(34,197,94,0.12);
+    border:1px solid rgba(34,197,94,0.35);
+    padding:4px 10px; border-radius:999px;
+  }
+  .badge .dot{ width:6px; height:6px; border-radius:50%; background:var(--green); }
+  .rank-badge{
+    font-size:0.68rem; font-weight:800; letter-spacing:0.4px; padding:3px 9px; border-radius:999px;
+    text-transform:uppercase; display:inline-block;
+  }
+  .rank-owner{ color:#fbbf24; background:rgba(251,191,36,0.14); border:1px solid rgba(251,191,36,0.4); }
+  .rank-admin{ color:#7fd0ff; background:rgba(79,142,247,0.14); border:1px solid rgba(79,142,247,0.4); }
+  .rank-member{ color:var(--text-dim); background:rgba(255,255,255,0.05); border:1px solid var(--card-border); }
+
+  nav.tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  nav.tabs button{
+    background:transparent; border:1px solid transparent; color:var(--text-dim);
+    padding:8px 14px; border-radius:9px; font-size:0.92rem; font-weight:600;
+    cursor:pointer; display:flex; align-items:center; gap:7px;
+    transition: all .15s ease;
+  }
+  nav.tabs button:hover{ color:var(--text); background: rgba(255,255,255,0.04); }
+  nav.tabs button.active{
+    color:#bcd4ff; background: rgba(79,142,247,0.12); border-color: rgba(79,142,247,0.4);
+  }
+  .logout-btn{
+    background:transparent; border:1px solid var(--card-border); color:var(--text-faint);
+    padding:7px 12px; border-radius:9px; font-size:0.82rem; cursor:pointer;
+  }
+  .logout-btn:hover{ color:var(--text); border-color:var(--card-border-hover); }
+
+  /* ---------- Gate screen ---------- */
+  .gate-wrap{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .gate-card{
+    width:100%; max-width:420px;
+    background: var(--card);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+    padding:40px 34px 32px;
+    text-align:center;
+    box-shadow: var(--shadow);
+  }
+  .gate-icon{
+    width:62px; height:62px; margin:0 auto 18px;
+    border-radius:50%;
+    background: rgba(79,142,247,0.14);
+    display:flex; align-items:center; justify-content:center;
+    color:#5fa8ff;
+  }
+  .gate-card h1{ margin:0 0 8px; font-size:1.6rem; font-weight:800; }
+  .gate-card p.sub{ margin:0 0 26px; color:var(--text-dim); font-size:0.94rem; line-height:1.5; }
+  .gate-input{
+    width:100%; padding:13px 16px; border-radius:11px;
+    background:#0d1120; border:1px solid var(--card-border);
+    color:var(--text); font-size:0.95rem; letter-spacing:0.5px;
+    outline:none; margin-bottom:14px; text-align:center;
+    transition: border-color .15s ease;
+  }
+  .gate-input:focus{ border-color: var(--blue); }
+  .gate-btn{
+    width:100%; padding:13px 16px; border:none; border-radius:11px;
+    background: var(--grad); color:#fff; font-weight:700; font-size:0.95rem;
+    letter-spacing:0.4px; cursor:pointer; box-shadow: 0 8px 20px rgba(79,142,247,0.25);
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .gate-btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(139,92,246,0.32); }
+  .gate-hint{ margin-top:16px; font-size:0.8rem; color:var(--text-faint); }
+  .gate-hint b{ color:var(--text-dim); }
+  .gate-error{
+    color:#f87171; font-size:0.84rem; margin:-4px 0 14px; min-height:1em;
+  }
+  .gate-mode{
+    margin-top:14px; font-size:0.72rem; padding:5px 10px; border-radius:999px; display:inline-block;
+  }
+  .gate-mode.live{ color:var(--green); background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); }
+  .gate-mode.local{ color:var(--amber); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); }
+
+  /* ---------- Main app ---------- */
+  #app{ display:none; }
+  main{ max-width:1080px; margin:0 auto; padding:28px 24px 60px; }
+
+  .welcome-banner{
+    background: linear-gradient(120deg, rgba(79,142,247,0.14), rgba(139,92,246,0.10));
+    border:1px solid rgba(139,92,246,0.28);
+    border-radius:16px;
+    padding:22px 24px;
+    margin-bottom:26px;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .welcome-banner .eyebrow{ font-size:0.75rem; font-weight:700; letter-spacing:0.6px; color:#9fb6ff; text-transform:uppercase; margin-bottom:6px; }
+  .welcome-banner h2{ margin:0 0 8px; font-size:1.35rem; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .welcome-banner p{ margin:0; color:var(--text-dim); font-size:0.95rem; line-height:1.55; }
+
+  .sync-pill{
+    font-size:0.72rem; font-weight:700; padding:5px 11px; border-radius:999px; white-space:nowrap;
+  }
+  .sync-pill.live{ color:var(--green); background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); }
+  .sync-pill.local{ color:var(--amber); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); }
+
+  .section-title{ font-size:1.5rem; font-weight:800; margin:0 0 6px; }
+  .section-sub{ color:var(--text-dim); font-size:0.92rem; margin:0 0 22px; }
+
+  .grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap:16px; }
+
+  .card{
+    background: var(--card); border:1px solid var(--card-border); border-radius:14px;
+    padding:20px; transition: border-color .15s ease, transform .15s ease;
+  }
+  .card:hover{ border-color: var(--card-border-hover); transform: translateY(-2px); }
+  .card .head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .card .head .title{ display:flex; align-items:center; gap:9px; font-weight:700; font-size:1rem; color:#bcd4ff; }
+  .card .num{ font-size:1.6rem; font-weight:800; color:#26304d; }
+  .card p{ margin:0; color:var(--text-dim); font-size:0.88rem; line-height:1.55; }
+  .card a.play-link{
+    display:inline-block; margin-top:14px; font-size:0.85rem; font-weight:700;
+    color:#8fb8ff; text-decoration:none;
+  }
+  .card a.play-link:hover{ text-decoration:underline; }
+
+  /* Snake game card spans wider */
+  .snake-card{ grid-column: 1 / -1; }
+  .snake-wrap{ display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start; margin-top:14px; }
+  canvas#snakeCanvas{
+    background:#0d1120; border:1px solid var(--card-border); border-radius:10px;
+    image-rendering: pixelated; touch-action:none;
+  }
+  .snake-side{ min-width:180px; }
+  .snake-score{ font-size:0.9rem; color:var(--text-dim); margin-bottom:10px; }
+  .snake-score b{ color:var(--text); font-size:1.3rem; display:block; }
+  .snake-btn{
+    background: var(--grad); border:none; color:#fff; font-weight:700;
+    padding:9px 16px; border-radius:9px; cursor:pointer; font-size:0.85rem; margin-bottom:10px;
+  }
+  .snake-hint{ font-size:0.78rem; color:var(--text-faint); line-height:1.5; }
+
+  /* Rules cards */
+  .rule-card .head .title{ color:#7fd0ff; }
+
+  /* Video vault */
+  .video-category{ margin-bottom:34px; }
+  .video-category h3{
+    font-size:1.05rem; font-weight:800; margin:0 0 4px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .video-category .cat-sub{ color:var(--text-dim); font-size:0.85rem; margin:0 0 14px; }
+  .video-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:16px; }
+  .video-card{
+    background:var(--card); border:1px solid var(--card-border); border-radius:14px;
+    overflow:hidden; transition: border-color .15s ease, transform .15s ease;
+  }
+  .video-card:hover{ border-color:var(--card-border-hover); transform: translateY(-2px); }
+  .video-embed{ position:relative; width:100%; padding-top:56.25%; background:#0d1120; }
+  .video-embed iframe{
+    position:absolute; inset:0; width:100%; height:100%; border:0;
+  }
+  .video-card .video-info{ padding:14px 16px; }
+  .video-card .video-info .title{ font-weight:700; font-size:0.94rem; color:#bcd4ff; margin-bottom:4px; }
+  .video-card .video-info p{ margin:0; color:var(--text-dim); font-size:0.83rem; line-height:1.5; }
+
+  /* Request form */
+  .req-form{ max-width:480px; }
+  .req-form label{ display:block; font-size:0.82rem; color:var(--text-dim); margin:14px 0 6px; }
+  .req-form input, .req-form textarea, .req-form select{
+    width:100%; padding:11px 13px; border-radius:9px; background:#0d1120;
+    border:1px solid var(--card-border); color:var(--text); font-size:0.9rem; outline:none;
+  }
+  .req-form textarea{ min-height:90px; resize:vertical; }
+  .req-form input:focus, .req-form textarea:focus, .req-form select:focus{ border-color:var(--blue); }
+  .req-submit{
+    margin-top:18px; background: var(--grad); border:none; color:#fff; font-weight:700;
+    padding:12px 20px; border-radius:10px; cursor:pointer; font-size:0.9rem;
+  }
+  .req-field-extra{ display:none; }
+  .req-field-extra.show{ display:block; }
+  .req-list{ margin-top:30px; }
+  .req-item{
+    background:var(--card); border:1px solid var(--card-border); border-radius:10px;
+    padding:14px 16px; margin-bottom:10px; font-size:0.86rem;
+  }
+  .req-item .top-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .req-type-pill{
+    font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;
+    padding:3px 9px; border-radius:999px; color:#bcd4ff; background:rgba(79,142,247,0.14);
+    border:1px solid rgba(79,142,247,0.35); white-space:nowrap;
+  }
+  .req-status-pill{
+    font-size:0.68rem; font-weight:800; text-transform:uppercase; padding:3px 9px; border-radius:999px;
+  }
+  .req-status-pending{ color:var(--amber); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); }
+  .req-status-resolved{ color:var(--green); background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); }
+  .req-status-dismissed{ color:var(--text-faint); background:rgba(255,255,255,0.04); border:1px solid var(--card-border); }
+  .req-item .meta{ color:var(--text-faint); font-size:0.75rem; margin-top:6px; }
+  .req-empty{ color:var(--text-faint); font-size:0.86rem; }
+  .req-admin-actions{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .mini-btn{
+    background:transparent; border:1px solid var(--card-border); color:var(--text-dim);
+    padding:6px 11px; border-radius:7px; font-size:0.78rem; cursor:pointer;
+  }
+  .mini-btn:hover{ border-color:var(--card-border-hover); color:var(--text); }
+  .mini-btn.primary{ background:var(--grad); border:none; color:#fff; font-weight:700; }
+  .mini-select{
+    padding:6px 9px; border-radius:7px; background:#0d1120; border:1px solid var(--card-border);
+    color:var(--text); font-size:0.78rem;
+  }
+
+  /* Admin tab */
+  .admin-banner{
+    border-radius:14px; padding:16px 18px; margin-bottom:22px; font-size:0.86rem; line-height:1.55;
+  }
+  .admin-banner.live{ background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.28); color:#bff2d0; }
+  .admin-banner.local{ background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.28); color:#fde3b0; }
+  .admin-banner code{
+    background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:5px; font-size:0.82em;
+  }
+  .uid-row{ display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap; }
+  .uid-row code{ word-break:break-all; }
+
+  .roster-table{ width:100%; border-collapse:collapse; margin-top:6px; }
+  .roster-table th{
+    text-align:left; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.4px;
+    color:var(--text-faint); padding:8px 10px; border-bottom:1px solid var(--card-border);
+  }
+  .roster-table td{
+    padding:10px; border-bottom:1px solid var(--card-border); font-size:0.87rem; vertical-align:middle;
+  }
+  .roster-table tr:last-child td{ border-bottom:none; }
+  .roster-name{ font-weight:700; }
+  .roster-id{ color:var(--text-faint); font-size:0.78rem; }
+  .save-rank-btn{
+    background:var(--grad); border:none; color:#fff; font-weight:700; font-size:0.76rem;
+    padding:6px 12px; border-radius:7px; cursor:pointer;
+  }
+  .admin-subtitle{ font-size:1.05rem; font-weight:800; margin:30px 0 10px; }
+
+  .tab-content{ display:none; }
+  .tab-content.active{ display:block; }
+
+  @media (max-width: 720px){
+    .topbar{ flex-wrap:wrap; gap:12px; padding:14px 16px; }
+    nav.tabs{ order:3; width:100%; overflow-x:auto; }
+    .roster-table{ font-size:0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ PASSCODE GATE ============ -->
+  <div class="gate-wrap" id="gateScreen">
+    <div class="gate-card">
+      <div class="gate-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h1>Shcoome Hub</h1>
+      <p class="sub">Private Squad Access Only. Enter your Student ID or passcode to proceed.</p>
+      <input type="password" id="passInput" class="gate-input" placeholder="Enter Passcode..." autocomplete="off">
+      <div class="gate-error" id="gateError"></div>
+      <button class="gate-btn" id="accessBtn">ACCESS HUB</button>
+      <div class="gate-hint">🔑 Default Passcode: <b>shcoome</b></div>
+      <div class="gate-mode local" id="gateModePill">Checking connection…</div>
+    </div>
+  </div>
+
+  <!-- ============ MAIN APP ============ -->
+  <div id="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">SHCOOME</div>
+        <div class="badge"><span class="dot"></span>SQUAD PRIVATE</div>
+      </div>
+      <nav class="tabs" id="tabsNav">
+        <button data-tab="games" class="active">🎮 Games</button>
+        <button data-tab="videos">📺 YouTube Vault</button>
+        <button data-tab="rules">🛡️ Rules</button>
+        <button data-tab="request">＋ Request</button>
+        <button data-tab="admin" id="adminTabBtn" style="display:none;">⚙️ Admin</button>
+      </nav>
+      <button class="logout-btn" id="logoutBtn">Log out</button>
+    </div>
+
+    <main>
+      <div class="welcome-banner" id="welcomeBanner">
+        <div>
+          <div class="eyebrow">Welcome back</div>
+          <h2 id="welcomeName">Hey there 👋</h2>
+          <p id="welcomeMsg">You're in. Browse games, the video vault, and hub rules from the tabs above.</p>
+        </div>
+        <div class="sync-pill local" id="syncPill">Local demo mode</div>
+      </div>
+
+      <!-- GAMES TAB -->
+      <div class="tab-content active" id="tab-games">
+        <div class="section-title">Games</div>
+        <div class="section-sub">Play something in-browser or jump out to an external link.</div>
+        <div class="grid">
+          <div class="card snake-card">
+            <div class="head">
+              <div class="title">🐍 Retro Snake</div>
+            </div>
+            <p>Classic Snake, built with HTML5 Canvas — runs entirely in your browser, no link needed.</p>
+            <div class="snake-wrap">
+              <canvas id="snakeCanvas" width="320" height="320"></canvas>
+              <div class="snake-side">
+                <div class="snake-score">Score<b id="snakeScore">0</b></div>
+                <button class="snake-btn" id="snakeStart">Start / Restart</button>
+                <div class="snake-hint">Arrow keys or WASD to move.<br>Swipe on mobile.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="head"><div class="title">🕹️ Game Link 1</div></div>
+            <p>Placeholder slot — swap this card's link and description for a real external game.</p>
+            <a class="play-link" href="#" target="_blank" rel="noopener">Open game →</a>
+          </div>
+          <div class="card">
+            <div class="head"><div class="title">🕹️ Game Link 2</div></div>
+            <p>Placeholder slot — swap this card's link and description for a real external game.</p>
+            <a class="play-link" href="#" target="_blank" rel="noopener">Open game →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEOS TAB -->
+      <div class="tab-content" id="tab-videos">
+        <div class="section-title">YouTube Watch Vault</div>
+        <div class="section-sub">Embedded playlists and videos for the squad, grouped by category.</div>
+        <div id="videoCategories"></div>
+      </div>
+
+      <!-- RULES TAB -->
+      <div class="tab-content" id="tab-rules">
+        <div class="section-title">Hub Code of Conduct</div>
+        <div class="section-sub">Follow these rules to keep Shcoome running smoothly for the squad.</div>
+        <div class="grid">
+          <div class="card rule-card">
+            <div class="head"><div class="title">🔒 Strict Privacy</div><div class="num">01</div></div>
+            <p>Never share the Shcoome passcode or link with anyone outside our trusted friend group.</p>
+          </div>
+          <div class="card rule-card">
+            <div class="head"><div class="title">🔁 Report Dead Links</div><div class="num">02</div></div>
+            <p>If a link or embed stops working, use the Request tab so an admin can fix or swap it.</p>
+          </div>
+          <div class="card rule-card">
+            <div class="head"><div class="title">💬 Request Content</div><div class="num">03</div></div>
+            <p>Want something new added, or think you deserve a rank change? Submit it in the Request tab.</p>
+          </div>
+          <div class="card rule-card">
+            <div class="head"><div class="title">🤝 Squad Respect</div><div class="num">04</div></div>
+            <p>Keep the hub friendly. No messing with links, spamming requests, or sharing passwords.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- REQUEST TAB -->
+      <div class="tab-content" id="tab-request">
+        <div class="section-title">Request Portal</div>
+        <div class="section-sub">Suggest content, report a broken link, or ask for a rank change. Admins can see and action these live.</div>
+        <div class="card req-form">
+          <label for="reqName">Your name</label>
+          <input type="text" id="reqName" placeholder="e.g. Sam">
+          <label for="reqType">Type</label>
+          <select id="reqType">
+            <option>Game</option>
+            <option>Video</option>
+            <option>Broken Link</option>
+            <option>Rank Change</option>
+            <option>Other</option>
+          </select>
+          <div class="req-field-extra" id="reqRankFieldWrap">
+            <label for="reqTargetId">Your Student ID / passcode</label>
+            <input type="text" id="reqTargetId" placeholder="So an admin knows which account to update">
+            <label for="reqDesiredRank">Rank you're requesting</label>
+            <select id="reqDesiredRank">
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <label for="reqText">Details</label>
+          <textarea id="reqText" placeholder="Link, description, or reason..."></textarea>
+          <button class="req-submit" id="reqSubmit">Submit request</button>
+        </div>
+        <div class="req-list">
+          <div class="section-title" style="font-size:1.1rem;">Recent requests</div>
+          <div id="reqItems"><div class="req-empty">No requests yet.</div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN TAB -->
+      <div class="tab-content" id="tab-admin">
+        <div class="section-title">Admin</div>
+        <div class="section-sub">Manage member ranks and action requests.</div>
+        <div id="adminBanner"></div>
+
+        <div class="admin-subtitle">Members</div>
+        <table class="roster-table" id="rosterTable">
+          <thead><tr><th>Name</th><th>ID</th><th>Rank</th><th></th></tr></thead>
+          <tbody id="rosterBody"><tr><td colspan="4" class="req-empty">Loading…</td></tr></tbody>
+        </table>
+
+        <div class="admin-subtitle">All requests</div>
+        <div id="adminReqItems"><div class="req-empty">No requests yet.</div></div>
+      </div>
+    </main>
+  </div>
+
+<!-- =========================================================
+     FIREBASE SETUP (optional but required for LIVE, cross-device
+     rank changes and a shared request inbox). Without it, the
+     hub still fully works in "local demo mode" — logins and
+     ranks come from the STUDENT_VAULTS object below, and rank
+     changes/requests only persist in your own browser.
+
+     TO GO LIVE:
+     1. Create a free project at https://console.firebase.google.com
+     2. Build > Authentication > enable the "Anonymous" sign-in method.
+     3. Build > Firestore Database > create database (production mode).
+     4. Project settings > your apps > add a Web app > copy the config
+        object into FIREBASE_CONFIG below.
+     5. In Firestore > Rules, paste the rules from the comment further
+        down in this file (search "SECURITY RULES").
+     6. In Firestore > Data, manually create ONE document to bootstrap
+        your own account as owner:
+          collection: members
+          document ID: shcoome-owner   (or whatever passcode you want)
+          fields: { name: "YourName", rank: "owner", message: "Welcome" }
+     7. Load the site and log in with that passcode once. The app will
+        automatically register your device as an admin. From then on,
+        use the Admin tab to promote/demote everyone else — no more
+        manual Firestore editing needed.
+   ========================================================= -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, signInAnonymously, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, collection, addDoc, onSnapshot,
+  query, orderBy, serverTimestamp, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =========================================================
+   CONFIG — customize this section for your squad
+   ========================================================= */
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+const FIREBASE_READY = FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("YOUR_");
+
+const GENERAL_PASSCODE = "shcoome";
+
+// Local demo data — used automatically until FIREBASE_CONFIG above is filled in.
+// Once Firebase is connected, member data & ranks come from Firestore instead.
+const STUDENT_VAULTS = {
+  "id001": { name: "Alex", rank: "member", message: "Your notes and links are all synced up — check the Request tab if anything's missing." },
+  "id002": { name: "Jordan", rank: "member", message: "Welcome back! New Snake high score to beat this week 👀" },
+  "owner": { name: "You", rank: "owner", message: "Local demo owner account — connect Firebase for this to be real and live for everyone." }
+  // Add more: "idXXX": { name: "...", rank: "member"|"admin"|"owner", message: "..." }
+};
+
+// YouTube Watch Vault — organize embedded videos/playlists into categories.
+const VIDEO_VAULT = [
+  {
+    category: "Bingeable Series",
+    sub: "Playlists updated whenever someone finds something good.",
+    items: [
+      { type: "playlist", id: "PLBCF2DAC6FFB574DE", title: "Example Playlist", note: "Swap this playlist ID for a real one." }
+    ]
+  },
+  {
+    category: "Gaming & Walkthroughs",
+    sub: "",
+    items: [
+      { type: "video", id: "dQw4w9WgXcQ", title: "Example Video", note: "Swap this video ID for a real one." }
+    ]
+  }
+];
+
+/* =========================================================
+   FIREBASE INIT
+   ========================================================= */
+let db = null, auth = null, currentUid = null;
+if(FIREBASE_READY){
+  const fbApp = initializeApp(FIREBASE_CONFIG);
+  auth = getAuth(fbApp);
+  db = getFirestore(fbApp);
+  onAuthStateChanged(auth, user => { if(user) currentUid = user.uid; });
+  signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed:", err));
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str == null ? '' : String(str);
+  return d.innerHTML;
+}
+
+/* =========================================================
+   GATE LOGIC
+   ========================================================= */
+const gateScreen = document.getElementById('gateScreen');
+const app = document.getElementById('app');
+const passInput = document.getElementById('passInput');
+const accessBtn = document.getElementById('accessBtn');
+const gateError = document.getElementById('gateError');
+const welcomeName = document.getElementById('welcomeName');
+const welcomeMsg = document.getElementById('welcomeMsg');
+const syncPill = document.getElementById('syncPill');
+const gateModePill = document.getElementById('gateModePill');
+const adminTabBtn = document.getElementById('adminTabBtn');
+
+let currentMember = null; // { id, name, rank, message }
+
+(function initModePill(){
+  gateModePill.textContent = FIREBASE_READY ? "🟢 Live sync connected" : "🟡 Local demo mode (Firebase not connected)";
+  gateModePill.className = "gate-mode " + (FIREBASE_READY ? "live" : "local");
+})();
+
+async function tryLogin(){
+  const raw = passInput.value.trim();
+  const key = raw.toLowerCase();
+  gateError.textContent = "";
+  if(!raw){
+    gateError.textContent = "Enter a passcode or Student ID.";
+    return;
+  }
+
+  if(FIREBASE_READY && db){
+    try{
+      const snap = await getDoc(doc(db, 'members', key));
+      if(snap.exists()){
+        const data = snap.data();
+        await enterHub({ id: key, name: data.name, rank: data.rank || 'member', message: data.message || '' });
+        return;
+      }
+    }catch(err){
+      console.error("Login lookup failed:", err);
+      gateError.textContent = "Couldn't reach the server — try again.";
+      return;
+    }
+    if(key === GENERAL_PASSCODE.toLowerCase()){
+      await enterHub({ id: null, name: 'Guest', rank: 'member', message: "You're in. Browse games, the video vault, and hub rules from the tabs above." });
+      return;
+    }
+    gateError.textContent = "Not recognized. Check your passcode or Student ID.";
+    return;
+  }
+
+  // Local demo mode fallback
+  if(key === GENERAL_PASSCODE.toLowerCase()){
+    await enterHub({ id: null, name: 'Guest', rank: 'member', message: "You're in. Browse games, the video vault, and hub rules from the tabs above." });
+    return;
+  }
+  if(STUDENT_VAULTS[key]){
+    await enterHub({ id: key, ...STUDENT_VAULTS[key] });
+    return;
+  }
+  gateError.textContent = "Not recognized. Check your passcode or Student ID.";
+}
+
+async function enterHub(member){
+  currentMember = member;
+  sessionStorage.setItem('shcoome_session', JSON.stringify(member));
+  gateScreen.style.display = 'none';
+  app.style.display = 'block';
+
+  const rankLabel = member.rank === 'owner' ? 'OWNER' : member.rank === 'admin' ? 'ADMIN' : null;
+  welcomeName.innerHTML = `Hey ${escapeHtml(member.name)} 👋` + (rankLabel ? ` <span class="rank-badge rank-${member.rank}">${rankLabel}</span>` : '');
+  welcomeMsg.textContent = member.message || "You're in.";
+  syncPill.textContent = FIREBASE_READY ? "🟢 Live sync" : "🟡 Local demo — not synced";
+  syncPill.className = "sync-pill " + (FIREBASE_READY ? "live" : "local");
+
+  const isAdmin = member.rank === 'admin' || member.rank === 'owner';
+  adminTabBtn.style.display = isAdmin ? 'flex' : 'none';
+
+  if(isAdmin && FIREBASE_READY && db && member.id){
+    await registerAsAdmin(member.id, member.rank);
+    initAdminListeners();
+  }
+  if(isAdmin){
+    renderAdminBanner();
+  }
+}
+
+async function registerAsAdmin(memberId, rank){
+  if(!currentUid){
+    await new Promise(res => setTimeout(res, 800));
+  }
+  if(!currentUid) return;
+  try{
+    await setDoc(doc(db, 'admins', currentUid), { memberId, rank, ts: serverTimestamp() });
+  }catch(err){
+    console.warn("Could not register admin device (expected if the bootstrap owner doc isn't set yet):", err.message);
+  }
+}
+
+accessBtn.addEventListener('click', tryLogin);
+passInput.addEventListener('keydown', e => { if(e.key === 'Enter') tryLogin(); });
+
+(function restoreSession(){
+  const saved = sessionStorage.getItem('shcoome_session');
+  if(!saved) return;
+  try{ enterHub(JSON.parse(saved)); }catch(e){}
+})();
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('shcoome_session');
+  currentMember = null;
+  app.style.display = 'none';
+  gateScreen.style.display = 'flex';
+  passInput.value = '';
+  gateError.textContent = '';
+});
+
+/* =========================================================
+   TABS
+   ========================================================= */
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* =========================================================
+   YOUTUBE WATCH VAULT
+   ========================================================= */
+function renderVideoVault(){
+  const container = document.getElementById('videoCategories');
+  container.innerHTML = VIDEO_VAULT.map(cat => `
+    <div class="video-category">
+      <h3>${escapeHtml(cat.category)}</h3>
+      ${cat.sub ? `<p class="cat-sub">${escapeHtml(cat.sub)}</p>` : ''}
+      <div class="video-grid">
+        ${cat.items.map(item => {
+          const src = item.type === 'playlist'
+            ? `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(item.id)}`
+            : `https://www.youtube.com/embed/${encodeURIComponent(item.id)}`;
+          return `
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="${src}" title="${escapeHtml(item.title)}" loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <div class="title">${escapeHtml(item.title)}</div>
+                ${item.note ? `<p>${escapeHtml(item.note)}</p>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* =========================================================
+   RETRO SNAKE (HTML5 Canvas)
+   ========================================================= */
+(function(){
+  const canvas = document.getElementById('snakeCanvas');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('snakeScore');
+  const startBtn = document.getElementById('snakeStart');
+  const grid = 16;
+  const tiles = canvas.width / grid;
+  let snake, dir, nextDir, food, score, loopId, running;
+
+  function reset(){
+    snake = [{x:8,y:8},{x:7,y:8},{x:6,y:8}];
+    dir = {x:1,y:0};
+    nextDir = {x:1,y:0};
+    score = 0;
+    scoreEl.textContent = '0';
+    placeFood();
+    running = true;
+  }
+
+  function placeFood(){
+    let ok = false;
+    while(!ok){
+      food = { x: Math.floor(Math.random()*tiles), y: Math.floor(Math.random()*tiles) };
+      ok = !snake.some(s => s.x === food.x && s.y === food.y);
+    }
+  }
+
+  function tick(){
+    if(!running) return;
+    dir = nextDir;
+    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+    if(head.x < 0 || head.y < 0 || head.x >= tiles || head.y >= tiles || snake.some(s => s.x===head.x && s.y===head.y)){
+      running = false;
+      draw();
+      ctx.fillStyle = 'rgba(10,13,22,0.75)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Game Over', canvas.width/2, canvas.height/2 - 6);
+      ctx.font = '13px sans-serif';
+      ctx.fillStyle = '#93a0bd';
+      ctx.fillText('Press Start to try again', canvas.width/2, canvas.height/2 + 16);
+      return;
+    }
+
+    snake.unshift(head);
+    if(head.x === food.x && head.y === food.y){
+      score++;
+      scoreEl.textContent = score;
+      placeFood();
+    } else {
+      snake.pop();
+    }
+    draw();
+  }
+
+  function draw(){
+    ctx.fillStyle = '#0d1120';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fillRect(food.x*grid+2, food.y*grid+2, grid-4, grid-4);
+    snake.forEach((s,i) => {
+      ctx.fillStyle = i===0 ? '#4f8ef7' : '#3a5fb8';
+      ctx.fillRect(s.x*grid+1, s.y*grid+1, grid-2, grid-2);
+    });
+  }
+
+  function start(){
+    if(loopId) clearInterval(loopId);
+    reset();
+    draw();
+    loopId = setInterval(tick, 110);
+  }
+
+  startBtn.addEventListener('click', start);
+
+  document.addEventListener('keydown', (e) => {
+    const map = {
+      ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0},
+      w:{x:0,y:-1}, s:{x:0,y:1}, a:{x:-1,y:0}, d:{x:1,y:0}
+    };
+    const nd = map[e.key];
+    if(!nd || !running) return;
+    if(nd.x === -dir.x && nd.y === -dir.y) return;
+    nextDir = nd;
+  });
+
+  let touchStart = null;
+  canvas.addEventListener('touchstart', e => { touchStart = e.touches[0]; });
+  canvas.addEventListener('touchend', e => {
+    if(!touchStart || !running) return;
+    const dx = e.changedTouches[0].clientX - touchStart.clientX;
+    const dy = e.changedTouches[0].clientY - touchStart.clientY;
+    if(Math.abs(dx) > Math.abs(dy)){
+      nextDir = dx > 0 ? {x:1,y:0} : {x:-1,y:0};
+    } else {
+      nextDir = dy > 0 ? {x:0,y:1} : {x:0,y:-1};
+    }
+    touchStart = null;
+  });
+
+  food = {x:12,y:8};
+  snake = [{x:8,y:8},{x:7,y:8},{x:6,y:8}];
+  draw();
+  ctx.fillStyle = 'rgba(10,13,22,0.55)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 15px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Press Start to play', canvas.width/2, canvas.height/2);
+})();
+
+/* =========================================================
+   REQUEST FORM
+   ========================================================= */
+const reqTypeSelect = document.getElementById('reqType');
+const reqRankFieldWrap = document.getElementById('reqRankFieldWrap');
+reqTypeSelect.addEventListener('change', () => {
+  reqRankFieldWrap.classList.toggle('show', reqTypeSelect.value === 'Rank Change');
+});
+
+function requestRowHtml(r, opts){
+  opts = opts || {};
+  const statusClass = 'req-status-' + (r.status || 'pending');
+  let extra = '';
+  if(r.type === 'Rank Change'){
+    extra = `<div class="meta">target ID: <code>${escapeHtml(r.targetId || '—')}</code> · requested rank: <b>${escapeHtml(r.desiredRank || '—')}</b></div>`;
+  }
+  let adminActions = '';
+  if(opts.admin){
+    if(r.type === 'Rank Change'){
+      adminActions = `
+        <div class="req-admin-actions">
+          <select class="mini-select" data-approve-rank-select="${r._id}">
+            <option value="member" ${r.desiredRank==='member'?'selected':''}>Member</option>
+            <option value="admin" ${r.desiredRank==='admin'?'selected':''}>Admin</option>
+            <option value="owner">Owner</option>
+          </select>
+          <button class="mini-btn primary" data-approve-rank="${r._id}" data-target="${escapeHtml(r.targetId||'')}">Approve & apply</button>
+          <button class="mini-btn" data-dismiss="${r._id}">Dismiss</button>
+        </div>`;
+    } else {
+      adminActions = `
+        <div class="req-admin-actions">
+          <button class="mini-btn primary" data-resolve="${r._id}">Mark resolved</button>
+          <button class="mini-btn" data-dismiss="${r._id}">Dismiss</button>
+        </div>`;
+    }
+  }
+  return `
+    <div class="req-item">
+      <div class="top-row">
+        <span class="req-type-pill">${escapeHtml(r.type)}</span>
+        <span class="req-status-pill ${statusClass}">${escapeHtml(r.status || 'pending')}</span>
+      </div>
+      <div style="margin-top:8px;">${escapeHtml(r.text)}</div>
+      ${extra}
+      <div class="meta">from ${escapeHtml(r.name || 'Anonymous')} · ${r.ts ? new Date(r.ts).toLocaleString() : 'just now'}</div>
+      ${adminActions}
+    </div>
+  `;
+}
+
+// ---- Local (demo mode) requests ----
+const reqItems = document.getElementById('reqItems');
+function loadLocalRequests(){
+  const list = JSON.parse(localStorage.getItem('shcoome_requests') || '[]');
+  if(list.length === 0){
+    reqItems.innerHTML = '<div class="req-empty">No requests yet.</div>';
+    return;
+  }
+  reqItems.innerHTML = list.slice().reverse().map((r,i) => requestRowHtml({...r, _id: String(i)})).join('');
+}
+
+document.getElementById('reqSubmit').addEventListener('click', async () => {
+  const name = document.getElementById('reqName').value.trim();
+  const type = document.getElementById('reqType').value;
+  const text = document.getElementById('reqText').value.trim();
+  const targetId = document.getElementById('reqTargetId').value.trim().toLowerCase();
+  const desiredRank = document.getElementById('reqDesiredRank').value;
+  if(!text) return;
+
+  const payload = { name, type, text, status: 'pending' };
+  if(type === 'Rank Change'){
+    payload.targetId = targetId;
+    payload.desiredRank = desiredRank;
+  }
+
+  if(FIREBASE_READY && db){
+    try{
+      await addDoc(collection(db, 'requests'), { ...payload, ts: serverTimestamp() });
+    }catch(err){
+      console.error("Submit failed:", err);
+      alert("Couldn't submit — check your connection and try again.");
+      return;
+    }
+  } else {
+    const list = JSON.parse(localStorage.getItem('shcoome_requests') || '[]');
+    list.push({ ...payload, ts: Date.now() });
+    localStorage.setItem('shcoome_requests', JSON.stringify(list));
+    loadLocalRequests();
+  }
+
+  document.getElementById('reqName').value = '';
+  document.getElementById('reqText').value = '';
+  document.getElementById('reqTargetId').value = '';
+});
+
+// ---- Live (Firestore) requests, shown to everyone read-only in Request tab ----
+if(FIREBASE_READY && db){
+  onSnapshot(query(collection(db, 'requests'), orderBy('ts', 'desc')), snap => {
+    const rows = [];
+    snap.forEach(d => {
+      const data = d.data();
+      rows.push({ ...data, _id: d.id, ts: data.ts && data.ts.toMillis ? data.ts.toMillis() : null });
+    });
+    if(rows.length === 0){
+      reqItems.innerHTML = '<div class="req-empty">No requests yet.</div>';
+    } else {
+      reqItems.innerHTML = rows.map(r => requestRowHtml(r, { admin:false })).join('');
+    }
+    renderAdminRequests(rows);
+  }, err => console.error("Requests listener failed:", err));
+} else {
+  loadLocalRequests();
+}
+
+/* =========================================================
+   ADMIN TAB
+   ========================================================= */
+function renderAdminBanner(){
+  const banner = document.getElementById('adminBanner');
+  if(FIREBASE_READY){
+    banner.innerHTML = `
+      <div class="admin-banner live">
+        Live sync is connected — rank changes here update Firestore and apply to everyone immediately.
+        <div class="uid-row">Your device ID: <code>${escapeHtml(currentUid || '…')}</code></div>
+      </div>`;
+  } else {
+    banner.innerHTML = `
+      <div class="admin-banner local">
+        Running in local demo mode — Firebase isn't connected yet, so rank changes and requests here only
+        affect this browser and won't be visible to your friends. See the setup instructions in the page
+        source (search "FIREBASE SETUP") to make this live.
+      </div>`;
+  }
+}
+
+async function initAdminListeners(){
+  if(!FIREBASE_READY || !db) return;
+  onSnapshot(collection(db, 'members'), snap => {
+    const rows = [];
+    snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+    renderRoster(rows);
+  }, err => {
+    console.warn("Member roster listener failed (you may not be registered as admin yet):", err.message);
+    document.getElementById('rosterBody').innerHTML =
+      `<tr><td colspan="4" class="req-empty">Couldn't load the roster — make sure your bootstrap owner document exists and Firestore rules are applied.</td></tr>`;
+  });
+}
+
+function renderRoster(rows){
+  const body = document.getElementById('rosterBody');
+  if(rows.length === 0){
+    body.innerHTML = `<tr><td colspan="4" class="req-empty">No members yet.</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(m => `
+    <tr>
+      <td class="roster-name">${escapeHtml(m.name || '—')}</td>
+      <td class="roster-id">${escapeHtml(m.id)}</td>
+      <td><span class="rank-badge rank-${m.rank || 'member'}">${(m.rank || 'member').toUpperCase()}</span></td>
+      <td>
+        <select class="mini-select" data-rank-select="${m.id}">
+          <option value="member" ${m.rank==='member'?'selected':''}>Member</option>
+          <option value="admin" ${m.rank==='admin'?'selected':''}>Admin</option>
+          <option value="owner" ${m.rank==='owner'?'selected':''}>Owner</option>
+        </select>
+        <button class="save-rank-btn" data-save-rank="${m.id}">Save</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+document.getElementById('rosterBody').addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-save-rank]');
+  if(!btn) return;
+  const memberId = btn.getAttribute('data-save-rank');
+  const select = document.querySelector(`[data-rank-select="${memberId}"]`);
+  const newRank = select.value;
+  try{
+    await updateDoc(doc(db, 'members', memberId), { rank: newRank });
+  }catch(err){
+    console.error("Rank update failed:", err);
+    alert("Couldn't update rank — check Firestore rules / your admin status.");
+  }
+});
+
+let lastRequestRows = [];
+function renderAdminRequests(rows){
+  lastRequestRows = rows;
+  const isAdmin = currentMember && (currentMember.rank === 'admin' || currentMember.rank === 'owner');
+  if(!isAdmin) return;
+  const target = document.getElementById('adminReqItems');
+  if(rows.length === 0){
+    target.innerHTML = '<div class="req-empty">No requests yet.</div>';
+    return;
+  }
+  target.innerHTML = rows.map(r => requestRowHtml(r, { admin:true })).join('');
+}
+
+document.getElementById('adminReqItems').addEventListener('click', async (e) => {
+  const resolveBtn = e.target.closest('[data-resolve]');
+  const dismissBtn = e.target.closest('[data-dismiss]');
+  const approveBtn = e.target.closest('[data-approve-rank]');
+
+  if(resolveBtn && FIREBASE_READY){
+    await updateDoc(doc(db, 'requests', resolveBtn.getAttribute('data-resolve')), { status: 'resolved' });
+  }
+  if(dismissBtn && FIREBASE_READY){
+    await updateDoc(doc(db, 'requests', dismissBtn.getAttribute('data-dismiss')), { status: 'dismissed' });
+  }
+  if(approveBtn && FIREBASE_READY){
+    const reqId = approveBtn.getAttribute('data-approve-rank');
+    const targetId = approveBtn.getAttribute('data-target');
+    const select = document.querySelector(`[data-approve-rank-select="${reqId}"]`);
+    const newRank = select.value;
+    if(!targetId){ alert("This request has no target ID to apply the rank to."); return; }
+    try{
+      await updateDoc(doc(db, 'members', targetId), { rank: newRank });
+      await updateDoc(doc(db, 'requests', reqId), { status: 'resolved' });
+    }catch(err){
+      console.error("Approve failed:", err);
+      alert("Couldn't apply — check the target ID exists in Members and that Firestore rules are applied.");
+    }
+  }
+});
+
+renderVideoVault();
+
+/* =========================================================
+   SECURITY RULES — paste these into Firestore > Rules
+   (kept here as reference; not executed by this file)
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /members/{memberId} {
+      allow get: if true;              // needed so anyone can log in by ID
+      allow list: if isAdmin();        // only admins see the full roster
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /admins/{uid} {
+      allow get, list: if isAdmin();
+      // Bootstrap: a device can register itself as admin ONLY if the
+      // member doc it claims already has rank 'admin' or 'owner'.
+      allow create: if request.auth != null &&
+        request.auth.uid == uid &&
+        request.resource.data.memberId is string &&
+        get(/databases/$(database)/documents/members/$(request.resource.data.memberId)).data.rank in ['admin','owner'];
+      allow update, delete: if isAdmin();
+    }
+
+    match /requests/{requestId} {
+      allow create: if request.auth != null;
+      allow get, list: if true;
+      allow update, delete: if isAdmin();
+    }
+  }
+}
+   ========================================================= */
+</script>
+</body>
+</html>
